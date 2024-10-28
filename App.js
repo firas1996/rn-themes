@@ -1,20 +1,33 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { Appearance, Text, View } from "react-native";
 
-export default function App() {
+const App = () => {
+  const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
+  console.log(Appearance.getColorScheme());
+
+  useEffect(() => {
+    const subscription = Appearance.addChangeListener(({ colorScheme }) => {
+      console.log("Theme changed to:", colorScheme); // Add log to debug
+      setColorScheme(colorScheme);
+    });
+
+    return () => subscription.remove();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: colorScheme === "dark" ? "#000" : "#fff",
+      }}
+    >
+      <Text style={{ color: colorScheme === "dark" ? "#fff" : "#000" }}>
+        Current Theme: {colorScheme}
+      </Text>
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
